@@ -4,3 +4,5 @@ openssl req -new -x509 -days 3650 -nodes -out certname.pem -keyout certname.key
 Get hash for pem. (Needed for stunnel certificate naming when using verify = 4)
 openssl x509 -hash -in cert.pem
 
+Convert crt to PEM
+openssl x509 -in mycert.crt -out mycert.pem -outform PEM
