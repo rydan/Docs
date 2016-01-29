@@ -1,0 +1,57 @@
+--- Setting up server side ---
+
+Server needs a pem certificate (can be self-generated or properly signed by CA), the corresponding key, and, if verify is to be used, a pem file containing all trusted client public certs (and, if signed, the rootCA and issuingCA certs), all concatenated to one file.
+
+Then, for each service that should be verified, use verify=3 (check only against locally available certs) (For stunnel 4.x. If upgraded to 5.x I think this should be verify=4) to verify the connecting clients
+
+example stunnel.conf:
+
+cert = ServerCert.pem
+key = ServerCert.key
+CAFile = AllTrustedClientCerts.pem
+
+debug = 7
+output = stunnel.log
+PID = stunnel.pid
+fips = no
+
+[service]
+sslVersion = all
+accept = 9711
+connect = 127.0.0.1:4711
+verify = 3
+
+
+
+--- Setting up client side ---
+
+Pretty much the same as on server side. If verify is to be used, client needs a certificate (self-generated or properly signed by CA), the corresponding key, and a pem file containing the trusted server 	public cert(s) (and, if signed, the rootCA and issuingCA certs), all concatenated to one file.
+
+Then, use verify=3 (or verify=4 for stunnel 5.x)
+
+example stunnel.conf:
+
+cert = ClientCert.pem
+key = ClientCert.key
+CAFile = AllTrustedServerCerts.pem
+
+local = 10.128.211.10
+
+debug = 7
+output = stunnel.log
+PID = stunnel.pid
+fips = no
+
+[service]
+client = yes
+sslVersion = all
+accept  = 4711
+connect = servername:9711
+verify = 3
+
+
+--- In stunnel.conf, select what network interface to use ---
+
+local = <ip address, format: xxx.xxx.xxx.xxx>
+ex: local = 10.128.211.10
+
